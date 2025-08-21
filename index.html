@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fractured Fairy Tales</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+
+  <style>
+:root{
+  --bg:#0f1220; --card:#171b2e; --ink:#e9ecf4; --muted:#b4bbce;
+  --accent:#ffb703; --accent-2:#60e1ff; --line:#26304b;
+  --radius:18px; --shadow:0 10px 30px rgba(0,0,0,.35);
+  /* New: controls visual width of the cover image block */
+  --cover-max:700px;
+}
+.cover{
+  max-width: var(--cover-max);
+  margin: 8px auto 0;   /* centres the cover block */
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Source Serif 4", Georgia, serif;
+    line-height:1.7;
+  }
+header .title,
+header .subtitle{ text-align: center; }
+.toc{ justify-content: center; }
+.toc a{ padding:6px 10px; font-size:13px; }
+
+/* Intro paragraphs only */
+#intro p{
+  text-align: justify;
+  text-justify: inter-word;   /* safe fallback */
+  hyphens: auto;              /* works because html has lang="en-GB" */
+}
+
+/* Optional: only justify on wider screens to avoid odd spacing on phones */
+@media (max-width: 560px){
+  #intro p{ text-align: left; hyphens: manual; }
+}
+.toc-wrap{ display: none !important; }
+
+
+
+
+  /* Header */
+  header{max-width:1100px;margin:0 auto;padding:24px 16px 12px}
+  .title{
+    font-family:"Manrope", system-ui, sans-serif;
+    font-weight:800; letter-spacing:.2px;
+    font-size:clamp(28px,4.6vw,46px);
+    margin:2px 0 6px;
+  }
+  .subtitle{color:var(--muted); margin-bottom:12px}
+  .cover{
+    border-radius:var(--radius);
+    overflow:hidden; box-shadow:var(--shadow);
+  }
+  .cover img{
+    width:100%; height:auto; display:block;
+    aspect-ratio:16/9; object-fit:cover;
+  }
+
+  /* TOC */
+  .toc-wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+  .toc {display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 22px}
+  .toc a{
+    font-family:"Manrope",sans-serif; font-weight:700; font-size:14px;
+    color: var(--bg); background: var(--accent);
+    padding:8px 12px; border-radius:999px; text-decoration:none;
+  }
+  .toc a:hover{filter:saturate(1.1)}
+
+  /* Generic card */
+  .card{
+    max-width:1100px; margin:18px auto; padding:16px;
+    background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00)) , var(--card);
+    border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
+  }
+  .card h2{
+    font-family:"Manrope",sans-serif; font-weight:800; font-size:clamp(18px,2.4vw,26px); margin:6px 0 12px;
+  }
+
+  /* Story card */
+  .story-card{max-width:1100px; margin:18px auto; padding:16px;
+    background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00)) , var(--card);
+    border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
+  }
+  .story-header{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+    margin-bottom:10px;
+  }
+  .story-title{
+    font-family:"Manrope",sans-serif; font-weight:800; font-size:clamp(18px,2.4vw,26px); margin:0;
+  }
+  .badge{
+    display:inline-block; font-family:"Manrope"; font-weight:800; font-size:12px;
+    color:var(--bg); background:var(--accent); padding:4px 8px; border-radius:6px; margin-right:8px;
+  }
+  .toggle{
+    font-family:"Manrope"; font-weight:700; font-size:14px; cursor:pointer;
+    color:var(--ink); background:transparent; border:1px solid var(--line);
+    padding:8px 12px; border-radius:10px;
+  }
+  .toggle:focus{outline:3px solid var(--accent); outline-offset:2px}
+
+  /* Two-column layout */
+  .story-body{
+    display:grid; grid-template-columns: 1fr minmax(220px, 340px); gap:18px; align-items:start;
+  }
+  @media (max-width: 860px){ .story-body{ grid-template-columns: 1fr; } }
+
+  /* Portrait (9:16) */
+  .portrait{
+    border-radius:14px; overflow:hidden; border:1px solid var(--line);
+    aspect-ratio:9/16; background:#0a0f1c;
+  }
+  .portrait img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  /* Story text */
+  .story-text{ text-align:justify; }
+
+  /* Collapsible */
+  .collapse{ max-height:0; overflow:hidden; transition:max-height .5s ease; }
+  .collapse.open{ max-height: 4000px; }
+
+  /* Meta blocks */
+  .divider{height:1px; background:var(--line); margin:16px 0}
+  .meta h4{
+    font-family:"Manrope"; font-size:16px; margin:8px 0 6px; letter-spacing:.2px;
+  }
+  dl{margin:0}
+  dt{font-weight:700}
+  dd{margin:0 0 8px 0; color:var(--muted)}
+
+  footer{max-width:1100px;margin:28px auto 46px; padding:0 16px; color:var(--muted)}
+  footer .line{height:1px;background:var(--line);margin:10px 0 12px}
+  </style>
+</head>
+<body>
+
+<!-- Text content adapted from the document you shared: Teen fractured Fairtales.docx :contentReference[oaicite:1]{index=1} -->
+
+<header>
+  <h1 class="title">Fractured Fairy Tales</h1>
+  <p class="subtitle"><i>Modern retellings for advanced learners (C1+) • Created by Panagiotis Domvros, English & Drama Teacher</i></p>
+
+  <div class="cover">
+    <img src="Cover.png" alt="Cover image of the collection">
+  </div>
+</header>
+
+<div class="toc-wrap">
+  <nav class="toc" aria-label="Contents">
+    <a href="#intro">Introduction</a>
+    <a href="#cinderella">1 Cinderella, CEO</a>
+    <a href="#red">2 Little Red Riding Hoodie</a>
+    <a href="#snow">3 Snow White &amp; the Seven Interns</a>
+    <a href="#sleeping">4 Sleeping Beauty Rewrites Her Contract</a>
+    <a href="#belle">5 Beauty and the Beastly Expectations</a>
+  </nav>
+</div>
+
+<!-- INTRODUCTION -->
+<section id="intro" class="card">
+  <h2>Introduction</h2>
+  <p>Fairy tales are some of the oldest and most familiar stories in the world. They usually begin with “Once upon a time…” and end with “happily ever after”. But these tales have never been fixed or unchanging. For centuries, they have been told, retold, and reshaped to reflect the values of each time and place.</p>
+  <p>A <strong>fractured fairy tale</strong> is a modern retelling of a traditional story. It takes the familiar characters, settings, and plots, but changes them in surprising ways. This practice is not new: writers and storytellers have always adapted fairy tales to challenge expectations, add humour, or speak to their own society. A fractured fairy tale may change the point of view, set the action in a new world, or twist the ending so that it questions the “lesson” of the original.</p>
+  <p>The stories in this collection all focus on a shared theme: <strong>feminist re-imaginings of classic tales</strong>. In traditional versions, young women are often passive, waiting to be rescued, rewarded for their beauty, or expected to “fix” others with kindness. Our fractured tales turn these expectations upside down. Here, Cinderella builds her own company, Red uses digital activism to expose a fraud, Snow White fights bias in technology, Sleeping Beauty demands consent and fair rules, and Belle refuses to be a man’s reward.</p>
+  <p>These stories are humorous, critical, and empowering. They invite us to ask:</p>
+  <ul>
+    <li>What happens when the heroine takes control of her own future?</li>
+    <li>How can old stories change to reflect new ideas of equality and justice?</li>
+    <li>And what does “happily ever after” mean today?</li>
+    <p><p>
+    <p> <i>Panagiotis Domvros, 2025</i></p>
+  </ul>
+</section>
+
+<!-- STORY 1 -->
+<section id="cinderella" class="story-card">
+  <div class="story-header">
+    <h2 class="story-title"><span class="badge">1</span> Cinderella, CEO</h2>
+    <button class="toggle" aria-expanded="false">Read story</button>
+  </div>
+
+  <div class="collapse">
+    <div class="story-body">
+      <article class="story-text">
+        <p>Cinderella did not dream of the ball.<br>
+        She thought it was silly to spend a night dancing in painful shoes just to meet a prince. While her stepsisters fought over hairpins and glittering dresses, Cinderella was making notes in her old exercise book. But her notes were not about fashion. They were sketches for inventions and business ideas.</p>
+        <p>One idea kept growing in her mind. She called it <em>SoleMate</em>: an app that matched unwanted shoes with people who actually needed them. The rich would donate their extra shoes; the poor could borrow or buy them cheaply; and local cobblers would be paid to repair old pairs. “Fair pay, less waste, better shoes,” she wrote proudly.</p>
+        <p>When the royal notice arrived, it caused chaos in the house. “The Prince invites all young women to the <em>Grand Innovation Ball</em>,” it read. “Present your ideas. The winner will receive investment and support from the Crown.”</p>
+        <p>Her stepsisters screamed with excitement. They thought the prize was marriage. They did not even notice the words about business.</p>
+        <p>“Don’t bother, Cinderella,” they sneered. “No one will look at you if your dress is covered in soot.”</p>
+        <p>Cinderella smiled quietly. <em>We’ll see.</em></p>
+        <p>That evening, when her family had left, her fairy godmother appeared—not in sparkles, but in a smart suit and glasses.</p>
+        <p>“I’m your godmother, but think of me more as your god-mentor,” she said briskly. “Forget pumpkins and glass slippers. You need presentation slides, good Wi-Fi, and a jacket that fits.”</p>
+        <p>She gave Cinderella a perfectly cut dark blue suit and polished shoes that were comfortable, not magical. “Now,” she added, “go win that competition.”</p>
+        <p>At the palace, the ball was dazzling. Chandeliers glittered, violins played, and rows of nervous candidates stood ready to present. Many had brought golden inventions that looked exciting but solved no real problems. The Prince, handsome but bored, clapped politely after each speech.</p>
+        <p>Finally, Cinderella’s turn came. Instead of a sparkling dress, she walked onto the stage with her laptop. People gasped.</p>
+        <p>“My idea is called <em>SoleMate</em>,” she began confidently. “It is not about glamour. It is about fairness and sustainability.”</p>
+        <p>She showed pictures of poor children wearing broken shoes, then of her app connecting them to pairs that would otherwise sit unused in rich wardrobes. She explained how cobblers would be paid to repair them. She spoke of dignity, choice, and real value.</p>
+        <p>By the time she finished, the ballroom was silent. Then applause began—slow at first, then louder and louder until it filled the hall.</p>
+        <p>The Prince leaned forward, his interest caught for the first time that evening. “This is extraordinary,” he said. “But what will you do if thousands join overnight? Can your system cope?”</p>
+        <p>Cinderella smiled. “It already has. While you were all dancing, I launched it. We have five hundred users as of ten minutes ago.”</p>
+        <p>The audience laughed and clapped again. Even the Prince could not hide his excitement.</p>
+        <p>After the ball, he hurried after her—not to return a lost shoe, but to ask questions about business models and user growth. He offered royal investment in exchange for part ownership.</p>
+        <p>Cinderella shook her head. “No, thank you. <em>SoleMate</em> will stay independent. But you may support it as a customer, like everyone else.”</p>
+        <p>The Prince blinked, then laughed. “Fair enough. I think I like you even better this way.”</p>
+        <p>And so, Cinderella returned home—not in a pumpkin carriage, but in a taxi paid for with her first investor donation. The next morning she had a hundred new sign-ups, including several palace staff. Within a year, <em>SoleMate</em> had expanded across the kingdom.</p>
+        <p>Cinderella did not marry the Prince, though they became friends and business partners. She built her own future, on her own terms. Her “happily ever after” was not a wedding—it was a company that truly changed lives.</p>
+      </article>
+
+      <figure class="portrait">
+        <img src="Cinderella.png" alt="Cinderella in a modern suit holding a laptop and a single heel">
+      </figure>
+    </div>
+
+    <div class="divider"></div>
+
+    <section class="meta">
+      <h4>Glossary (C1 – Student-Friendly)</h4>
+      <dl>
+        <dt>Exercise book</dt><dd>a notebook for schoolwork.</dd>
+        <dt>Sketches</dt><dd>quick, simple drawings or notes of ideas.</dd>
+        <dt>Cobblers</dt><dd>people who repair shoes.</dd>
+        <dt>Investment</dt><dd>money given to help a business grow.</dd>
+        <dt>The Crown</dt><dd>the monarchy or royal family.</dd>
+        <dt>Sneered</dt><dd>smiled or spoke in an unkind, mocking way.</dd>
+        <dt>Briskly</dt><dd>quickly and with energy.</dd>
+        <dt>Chandeliers</dt><dd>large, decorative lights hanging from the ceiling.</dd>
+        <dt>Glamour</dt><dd>attractive appearance that seems magical.</dd>
+        <dt>Sustainability</dt><dd>using resources in a way that doesn’t harm the future.</dd>
+        <dt>Wardrobes</dt><dd>tall cupboards where clothes are kept.</dd>
+        <dt>Dignity</dt><dd>being respected and valued as a person.</dd>
+        <dt>Business model</dt><dd>the way a company makes money.</dd>
+        <dt>Independent</dt><dd>not controlled by another person or company.</dd>
+        <dt>On her own terms</dt><dd>in a way she chooses for herself.</dd>
+      </dl>
+
+      <h4>Discussion Questions</h4>
+      <ol>
+        <li>Why does Cinderella refuse to accept royal investment? Do you agree with her choice?</li>
+        <li>In this version, what does “happily ever after” mean? How is it different from the traditional story?</li>
+        <li>Do you think technology and apps can really solve problems like poverty? Why or why not?</li>
+      </ol>
+    </section>
+  </div>
+</section>
+
+<!-- STORY 2 -->
+<section id="red" class="story-card">
+  <div class="story-header">
+    <h2 class="story-title"><span class="badge">2</span> Little Red Riding Hoodie</h2>
+    <button class="toggle" aria-expanded="false">Read story</button>
+  </div>
+
+  <div class="collapse">
+    <div class="story-body">
+      <article class="story-text">
+        <p>Red never liked being told she was “too dramatic”. She wore her favourite hoodie, bright red like a stop sign, because it made her feel visible. “No one can say they didn’t see me,” she laughed, pulling the hood up as she packed her rucksack with food for Grandma.</p>
+        <p>The path through the forest was famous for rumours. Some people said it was dangerous. Others said it was full of magical creatures. Red thought the biggest danger was poor signposts. She set off with her phone in one hand and a basket in the other.</p>
+        <p>Halfway down the trail, her screen lit up: a new follower, <strong>@MrWolfeOfficial</strong>. His profile read: Forest guardian. Wellness coach. Influencer. He had videos of himself collecting litter, doing yoga in the woods, and speaking about “protecting women travellers”.</p>
+        <p>Almost immediately, he sent her a message:<br>
+        “Hey Red! Walking alone? Risky. I can show you a safer shortcut 😉.”</p>
+        <p>She frowned. The map link he sent looped around the forest in a strange way. She typed back: <em>Thanks, but I’ll take the marked path.</em></p>
+        <p>At the old wooden bridge, Mr Wolfe appeared in real life, taller than she expected, with very white teeth. A cameraman followed him.</p>
+        <p>“We’re filming a segment about safety,” Wolfe said smoothly. “Walk with me. It will look good on video. You don’t want to overreact, do you?”</p>
+        <p>Red heard that word again—<em>overreact</em>. It was the same word boys at school used whenever she called out bad behaviour. She tightened her hood. “I’m fine, thanks,” she said firmly. “I’ll stick to my route.”</p>
+        <p>Grandma’s cottage was cosy, smelling of tea and lemon polish. On the wall hung her old park ranger badge. She had fought battles with hunters, officials, and developers, and she had never needed saving.</p>
+        <p>“That man is everywhere,” Grandma sighed when Red showed her Wolfe’s profile. “He films himself taking credit for work volunteers have been doing for years.”</p>
+        <p>They brewed tea and turned on his latest video. He stood by Grandma’s compost heap, pretending it was his project. Thousands of comments praised his leadership.</p>
+        <p>“He’s making money from donations that should support the park,” Red realised.</p>
+        <p>“Then we need to change the story,” Grandma said.</p>
+        <p>The next day they set up a livestream. Red explained clearly how the park worked: the real volunteers, the real needs, the real donation page. Grandma showed her ranger maps, pointing to paths the community had built.</p>
+        <p>Wolfe arrived halfway through, pushing into the camera frame. “Great initiative, ladies,” he boomed. “I can boost your reach.”</p>
+        <p>Red looked straight at the camera. “Mr Wolfe,” she said calmly, “could you explain how much of your donation money actually goes to the park?”</p>
+        <p>He froze. “It’s complicated.”</p>
+        <p>“Not really,” Grandma said, showing her badge. “Try us.”</p>
+        <p>Viewers flooded the comments with questions. Some even posted evidence that Wolfe’s links redirected money through several private accounts. The cameraman slowly lowered his equipment.</p>
+        <p>“This is an attack!” Wolfe snapped.</p>
+        <p>“No,” Red corrected. “It’s accountability. And by the way—asking questions isn’t overreacting. It’s protecting ourselves.”</p>
+        <p>By sunset, donations to the official park fund had tripled. Wolfe posted an “apology”, but it was vague and full of excuses. The cameraman, now unemployed, asked Red if he could join the next clean-up event properly.</p>
+        <p>The following weekend, Red and Grandma held a workshop at the community hall. They called it <strong>Digital Self-Defence and Forest Navigation</strong>. Girls practised saying “no” without smiling to soften it. They learnt how to check facts online and how to read forest maps without getting lost. Boys joined too, eager to help as real allies.</p>
+        <p>“Your voice isn’t too loud,” Grandma told them all. “Sometimes the world is simply set too quiet.”</p>
+        <p>Red walked home afterwards, her red hoodie bright against the green forest. She no longer felt like a girl being warned about wolves. She felt like a leader, marking a new path for others to follow.</p>
+      </article>
+
+      <figure class="portrait">
+        <img src="Red.png" alt="Red in a hoodie walking confidently through a forest path">
+      </figure>
+    </div>
+
+    <div class="divider"></div>
+
+    <section class="meta">
+      <h4>Glossary</h4>
+      <dl>
+        <dt>Rucksack</dt><dd>a bag carried on your back.</dd>
+        <dt>Rumour</dt><dd>a story people spread without proof.</dd>
+        <dt>Influencer</dt><dd>someone popular online who promotes products or ideas.</dd>
+        <dt>Overreact</dt><dd>to respond too strongly to something (often used unfairly).</dd>
+        <dt>Ranger</dt><dd>a person who looks after a forest or park.</dd>
+        <dt>Compost heap</dt><dd>a pile of decaying plants used to make natural fertiliser.</dd>
+        <dt>Livestream</dt><dd>a live video broadcast online.</dd>
+        <dt>Accountability</dt><dd>responsibility for actions and their results.</dd>
+        <dt>Donation page</dt><dd>a website where people give money for a cause.</dd>
+        <dt>Boost your reach</dt><dd>help more people see your content online.</dd>
+        <dt>Redirected</dt><dd>sent to a different place or account.</dd>
+        <dt>Excuse</dt><dd>a weak or false reason for bad behaviour.</dd>
+        <dt>Allies</dt><dd>people who support others in their struggle for equality.</dd>
+        <dt>Defence</dt><dd>protection against harm.</dd>
+        <dt>Set too quiet</dt><dd>metaphor meaning the system ignores certain voices.</dd>
+      </dl>
+
+      <h4>Discussion Questions</h4>
+      <ol>
+        <li>Why does Mr Wolfe call Red “overreactive”? What effect does this word have?</li>
+        <li>How do Red and Grandma use social media differently from Wolfe?</li>
+        <li>What skills do the girls learn in the workshop? How are they useful beyond the forest?</li>
+      </ol>
+    </section>
+  </div>
+</section>
+
+<!-- STORY 3 -->
+<section id="snow" class="story-card">
+  <div class="story-header">
+    <h2 class="story-title"><span class="badge">3</span> Snow White and the Seven Interns</h2>
+    <button class="toggle" aria-expanded="false">Read story</button>
+  </div>
+
+  <div class="collapse">
+    <div class="story-body">
+      <article class="story-text">
+        <p>Snow White had not planned to work at a start-up. But when her stepmother threw her out of the palace, she needed a job quickly. The only company hiring was <strong>Fairest</strong>, a new tech business that claimed it could make job interviews completely fair using a “magic mirror algorithm”.</p>
+        <p>The office looked modern: beanbags, plants, and free fruit in the kitchen. But the interns—seven of them—were clearly exhausted. Their nicknames spread quickly through the team chat: Doc (the one who always explained things), Bashful, Grumpy, Happy, Sleepy, Sneezy, and Dopey. They were unpaid, working “for experience”, and eating more free bananas than was healthy.</p>
+        <p>Snow’s task was to check data from the mirror. It ranked job candidates, giving them scores from one to ten. At first, it looked impressive. But after a few weeks, Snow noticed a problem: the mirror always gave higher scores to men, to rich applicants, and to people who had never taken time off work. Women, carers, and people from poorer backgrounds were pushed down the list.</p>
+        <p>“This isn’t fair at all,” she whispered to Doc one evening.</p>
+        <p>He sighed. “We know. We’re basically building a machine that repeats society’s prejudices.”</p>
+        <p>Snow thought hard. If the mirror was biased, then it wasn’t magic—it was just dishonest maths.</p>
+        <p>That night, she and the interns stayed late, working secretly in the server room. They created a new feature that showed exactly where the bias came from. On the screen, red warning bars appeared: “⚠ Women under-ranked”, “⚠ Working-class candidates ignored”, “⚠ Career breaks penalised”.</p>
+        <p>The next morning, when the Queen (the CEO) opened her mirror, she was horrified. “Who changed my algorithm?” she demanded.</p>
+        <p>“I did,” Snow said, standing tall. “And unless you fix it, I’ll make our patch public. Everyone will know.”</p>
+        <p>The Queen smiled coldly. “Careful, my dear. You signed a contract.”</p>
+        <p>“Which is illegal,” Snow replied calmly. “You can’t silence whistleblowers.”</p>
+        <p>The interns cheered quietly.</p>
+        <p>Angry, the Queen offered Snow an apple from her desk. “Have a snack,” she said sweetly. “You’ll feel better.”</p>
+        <p>Snow laughed. “No thanks. I prefer transparency.” She dropped the apple into the recycling bin.</p>
+        <p>That afternoon, the interns and Snow held a small launch at a community centre down the road. They called themselves <strong>The Seven &amp; Co.</strong> Their new mission was to check hiring software for hidden bias. They offered training for companies, published their code openly, and promised to pay everyone fairly—including interns.</p>
+        <p>At first, the Queen sent a lawyer with threats. But when a journalist reported on the unfairness of her mirror, she had no choice but to change her company policies.</p>
+        <p>Snow White and the Seven Interns became successful slowly but honestly. Their clients were schools, charities, and small businesses that wanted to do better. They turned down big corporations who only wanted a good public image.</p>
+        <p>On the wall of their tiny office, they hung a cracked old mirror. It reflected not a “fairest of them all”, but a team of tired, hopeful young people who had learnt one thing: real fairness does not come from magic—it comes from courage, teamwork, and asking difficult questions.</p>
+      </article>
+
+      <figure class="portrait">
+        <img src="Snow.png" alt="Snow White leading a modern team meeting in a start-up office">
+      </figure>
+    </div>
+
+    <div class="divider"></div>
+
+    <section class="meta">
+      <h4>Glossary</h4>
+      <dl>
+        <dt>Start-up</dt><dd>a new business, often in technology.</dd>
+        <dt>Algorithm</dt><dd>a set of rules a computer follows to solve a problem.</dd>
+        <dt>Interns</dt><dd>students or young workers who gain experience, often unpaid.</dd>
+        <dt>Prejudices</dt><dd>unfair opinions or judgements about people.</dd>
+        <dt>Server room</dt><dd>a room with the main company computers.</dd>
+        <dt>Bias</dt><dd>preference for or against a group, often unfair.</dd>
+        <dt>Penalised</dt><dd>punished or treated as less valuable.</dd>
+        <dt>Whistleblower</dt><dd>a person who reports illegal or unfair practices at work.</dd>
+        <dt>Transparency</dt><dd>openness; sharing information honestly.</dd>
+        <dt>Community centre</dt><dd>a public building for meetings and events.</dd>
+        <dt>Openly</dt><dd>in a way that everyone can see.</dd>
+        <dt>Corporations</dt><dd>very large companies.</dd>
+        <dt>Public image</dt><dd>the way an organisation appears to the public.</dd>
+        <dt>Threats</dt><dd>promises of punishment or harm if someone does not obey.</dd>
+        <dt>Fairness</dt><dd>treating people equally and justly.</dd>
+      </dl>
+
+      <h4>Discussion Questions</h4>
+      <ol>
+        <li>How does Snow White discover the bias in the Queen’s mirror?</li>
+        <li>Why is it important that The Seven &amp; Co. publish their code openly?</li>
+        <li>Do you think technology can ever be truly “fair”? Why or why not?</li>
+      </ol>
+    </section>
+  </div>
+</section>
+
+<!-- STORY 4 -->
+<section id="sleeping" class="story-card">
+  <div class="story-header">
+    <h2 class="story-title"><span class="badge">4</span> Sleeping Beauty Rewrites Her Contract</h2>
+    <button class="toggle" aria-expanded="false">Read story</button>
+  </div>
+
+  <div class="collapse">
+    <div class="story-body">
+      <article class="story-text">
+        <p>Aurora had always been told her story: she would prick her finger on a spindle, fall into a deep sleep, and one day a prince would kiss her awake. That was it. No questions asked.</p>
+        <p>And so, on her sixteenth birthday, the curse came true. She touched the spindle, her eyes closed, and the whole castle slowed into silence. For decades, life carried on around her. Courtiers pretended everything was fine, gardeners trimmed the same bushes, and advisors produced endless reports with titles like <em>On the Productive Management of a Sleeping Princess</em>.</p>
+        <p>But then, one day, a lawyer stumbled into the castle. He was checking old royal documents and found the curse written down like a contract. He frowned. “There’s a problem here. She never agreed to this. Without consent, this whole thing could be invalid.”</p>
+        <p>He left a letter by Aurora’s bedside. Strangely, she opened her eyes just enough to read it. Perhaps words, not kisses, were the true magic.</p>
+        <p>When she finally woke, the fairies rushed in with flowers and cameras, ready for a happy ending. Aurora sat up slowly and held out the letter. “This arrangement is unfair,” she said. “I want a hearing. I never consented to sleeping my life away.”</p>
+        <p>The fairies froze. The prince arrived soon after, holding a speech and looking very handsome. “Fear not, dear princess,” he said grandly. “I am here to break the curse with a kiss.”</p>
+        <p>Aurora raised her hand. “No, thank you. If you want to help, fetch me a coffee.”</p>
+        <p>The prince blinked. He had not trained for this.</p>
+        <p>Aurora gathered everyone in the Great Hall: the fairies, the advisors, the staff, even the sleepy guards. She read out the curse as if it were meeting notes. “This was forced on me. From now on, there will be rules to protect others from the same fate.”</p>
+        <p>Together, they drafted the <strong>Awakening Charter</strong>, a new law for the kingdom. It included:</p>
+        <ul>
+          <li>No magical contracts without informed consent.</li>
+          <li>The right to refuse “rescues” that nobody asked for.</li>
+          <li>Payment for workers who had kept the castle running during the long sleep.</li>
+          <li>An end to the idea that princesses must marry princes to solve problems.</li>
+        </ul>
+        <p>The prince raised his hand shyly. “Then what should I do?”</p>
+        <p>“Apply for a job,” Aurora said. “I need urban planners. This castle has far too many empty corridors. We could use libraries instead.”</p>
+        <p>To his surprise, he was hired—not as a rescuer, but as a junior architect. He even learnt to make decent coffee.</p>
+        <p>Over time, the castle transformed. Corridors were turned into classrooms, old towers into study rooms, and the gardens into vegetable patches. Visitors complained that it was less romantic, but locals were delighted to have free spaces to learn and grow food.</p>
+        <p>Aurora refused a crown. “Crowns pinch,” she said. Instead, she organised a grand opening for the East Wing Library. Children were invited to borrow books for free.</p>
+        <p>And the curse? It ended not with a kiss, but with a habit: asking first. Aurora taught her people that “happily ever after” was not about sleeping, waiting, or marrying the right man. It was about building a fair system where everyone had a voice.</p>
+      </article>
+
+      <figure class="portrait">
+        <img src="Sleeping.png" alt="Aurora seated at a table of contracts, fairies and a prince listening">
+      </figure>
+    </div>
+
+    <div class="divider"></div>
+
+    <section class="meta">
+      <h4>Glossary</h4>
+      <dl>
+        <dt>Spindle</dt><dd>a tool used for spinning thread.</dd>
+        <dt>Courtiers</dt><dd>people who work for a royal court.</dd>
+        <dt>Advisor</dt><dd>someone who gives official advice.</dd>
+        <dt>Consent</dt><dd>agreement to something after being fully informed.</dd>
+        <dt>Invalid</dt><dd>not legally acceptable.</dd>
+        <dt>Hearing</dt><dd>a formal meeting to discuss or decide something.</dd>
+        <dt>Grandly</dt><dd>in a proud or impressive way.</dd>
+        <dt>Informed consent</dt><dd>permission given with full understanding of the facts.</dd>
+        <dt>Charter</dt><dd>an official document setting out rules or principles.</dd>
+        <dt>Rescue</dt><dd>saving someone from danger.</dd>
+        <dt>Payment</dt><dd>money given in return for work.</dd>
+        <dt>Urban planner</dt><dd>a person who designs how a town or city should be organised.</dd>
+        <dt>Corridor</dt><dd>a long passage in a building.</dd>
+        <dt>Romantic</dt><dd>related to love or idealised beauty.</dd>
+        <dt>Habit</dt><dd>something you do regularly.</dd>
+      </dl>
+
+      <h4>Discussion Questions</h4>
+      <ol>
+        <li>Why does Aurora reject the prince’s kiss as a solution?</li>
+        <li>How does the <em>Awakening Charter</em> change the way the kingdom works?</li>
+        <li>What does Aurora mean when she says, “It’s about building a fair system where everyone has a voice”?</li>
+      </ol>
+    </section>
+  </div>
+</section>
+
+<!-- STORY 5 -->
+<section id="belle" class="story-card">
+  <div class="story-header">
+    <h2 class="story-title"><span class="badge">5</span> Beauty and the Beastly Expectations</h2>
+    <button class="toggle" aria-expanded="false">Read story</button>
+  </div>
+
+  <div class="collapse">
+    <div class="story-body">
+      <article class="story-text">
+        <p>Belle was clever, curious, and independent. She loved reading more than anything, but she was tired of people telling her she was “patient” and “kind”. She didn’t want her story to be about fixing other people’s problems—especially men’s.</p>
+        <p>So when her father got lost and she ended up in the Beast’s gloomy castle, Belle did not panic. She unpacked her books, looked around the huge, dark hall, and thought: <em>This place needs better lighting.</em></p>
+        <p>The Beast stormed in with a roar. “You are my prisoner!” he bellowed.</p>
+        <p>Belle raised an eyebrow. “Actually, the word you used was <em>guest</em>. And either way, shouting won’t improve your case.”</p>
+        <p>The Beast blinked, surprised. Nobody had spoken to him like that before.</p>
+        <p>Instead of crying, Belle started making a list. “If you want company, you’ll need to change some habits,” she said. “Step one: apologise properly when you hurt someone. Step two: take responsibility for the damage. Step three: stop expecting women to fix you.”</p>
+        <p>The servants, who had been trapped under the Beast’s temper for years, looked at her with relief. Mrs Potts whispered, “At last, someone said it.”</p>
+        <p>Soon Belle had set up a <strong>Charm School for Monsters</strong> in the ballroom. It was not about teaching politeness for parties. It was about real change: listening, apologising, and learning empathy. The Beast attended every class. At first, he sulked at the back. But slowly, he started to improve.</p>
+        <p>He apologised to the servants for his anger. He paid for broken plates. He even tried gardening, learning that roses grow better when treated with care. “It’s strange,” he admitted. “Doing the right thing makes me feel… lighter.”</p>
+        <p>Meanwhile, Belle created a <strong>Women’s Reading Room</strong> in the castle. Girls from the village came every Saturday to read together. They wrote essays with titles like <em>I Am Not a Reward</em> and <em>Happily, After</em>.</p>
+        <p>When the enchantress who had cursed the Beast returned, she asked, “So, has a woman’s love broken your curse?”</p>
+        <p>The Beast shook his head. “No. I’m just learning to behave.”</p>
+        <p>The enchantress smiled. “Exactly. The curse was never about finding love—it was about learning respect.” With those words, the magic faded. The Beast remained himself, but calmer, kinder, and much more reasonable.</p>
+        <p>One day, Belle announced, “I’m leaving for a while. I’ve been offered a fellowship in the city to build more reading rooms. I can’t waste this chance.”</p>
+        <p>The Beast’s old self might have begged her to stay. Instead, he said: “I’ll miss you. How can I support your work?”</p>
+        <p>“Keep the castle library open,” Belle replied. “And remember: change is not a one-time spell. It’s daily practice.”</p>
+        <p>That night the servants threw a party. Nobody wore masks, nobody pretended. They danced because they wanted to, not because a fairy tale demanded it.</p>
+        <p>When Belle walked out the next morning, suitcase in hand, she did not feel like a prize leaving her prince. She felt like a leader starting a movement. And behind her, the Beast was not broken-hearted—he was busy keeping the reading room open, ready for the next group of girls to arrive.</p>
+      </article>
+
+      <figure class="portrait">
+        <img src="Beauty.png" alt="Belle leading a reading group in a warm library; the Beast sits quietly with a book">
+      </figure>
+    </div>
+
+    <div class="divider"></div>
+
+    <section class="meta">
+      <h4>Glossary</h4>
+      <dl>
+        <dt>Independent</dt><dd>not needing help from others.</dd>
+        <dt>Gloomy</dt><dd>dark and depressing.</dd>
+        <dt>Eyebrow</dt><dd>the hair above the eye, often used to show expression.</dd>
+        <dt>Habit</dt><dd>something done regularly, often without thinking.</dd>
+        <dt>Apologise properly</dt><dd>say sorry sincerely, without excuses.</dd>
+        <dt>Responsibility</dt><dd>accepting that something is your fault.</dd>
+        <dt>Empathy</dt><dd>the ability to understand how others feel.</dd>
+        <dt>Sulking</dt><dd>acting in a bad mood and refusing to talk.</dd>
+        <dt>Enchantress</dt><dd>a woman with magical powers.</dd>
+        <dt>Fellowship</dt><dd>a special study or work opportunity.</dd>
+        <dt>Begged</dt><dd>asked desperately.</dd>
+        <dt>Support</dt><dd>help someone succeed.</dd>
+        <dt>Practice</dt><dd>something you do again and again until it becomes natural.</dd>
+        <dt>Movement</dt><dd>a group of people working for change.</dd>
+        <dt>Reasonable</dt><dd>sensible and fair.</dd>
+      </dl>
+
+      <h4>Discussion Questions</h4>
+      <ol>
+        <li>How does Belle challenge the traditional idea of “taming” the Beast?</li>
+        <li>What is the real meaning of the curse in this version?</li>
+        <li>Why is it important that Belle leaves the castle at the end?</li>
+      </ol>
+    </section>
+  </div>
+</section>
+
+<footer aria-label="Site footer">
+  <div class="line"></div>
+  <!-- PASTE YOUR MODEL FOOTER HERE (keep credits identical to your model HTML). -->
+  <p><em>✨✍️ Created by Panagiotis Domvros, English and Drama Teacher, All Rights Reserved ✍️✨.</p>
+</footer>
+
+<script>
+document.querySelectorAll('.story-card').forEach(card=>{
+  const btn = card.querySelector('.toggle');
+  const box = card.querySelector('.collapse');
+  const id = card.id;
+  btn.addEventListener('click', ()=>{
+    const open = box.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.textContent = open ? 'Collapse' : 'Read story';
+    if(open) history.replaceState(null, '', '#'+id);
+  });
+});
+</script>
+
+</body>
+</html>
